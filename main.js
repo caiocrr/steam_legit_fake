@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var request = require('request');
 var callback = "function (data) { document.write(data); document.close(); }" 
-var content = "<button onclick=\"jQuery.get('http://localhost:8089/fake', " + callback + ")\" type='button' style='position:absolute; top:0; background-color: #FF0000; color: #FFFFFF'>É fake!</button><button onclick=\"jQuery.get('http://localhost:8089/next', " + callback + ")\"  type='button' style='position:absolute; top:0; right:0 '>Próximo</button></body></html>"
+var content = "<button onclick=\"jQuery.get('http://localhost:8089/fake', " + callback + ")\" type='button' style='position:absolute; top:0; background-color: #FF0000; color: #FFFFFF'>É fake!</button><button onclick=\"jQuery.get('http://localhost:8089/next', " + callback + ")\"  type='button' style='position:absolute; top:0; right:50vw; z-index: 500'>Próximo</button><button onclick=\"jQuery.get('http://localhost:8089/confiavel', " + callback + ")\"  type='button' style='position:absolute; top:0; right:0; background-color:#00FF00'>Confiável</button></body></html>"
 
 const fileName = "steamid_visitados.json"
 const express = require('express')
@@ -52,6 +52,18 @@ var fake = function (req,res,next) {
     console.log("FAKE!!! ", _idAtual)
     _idsArquivo[_idAtual].visitado = true;
     _idsArquivo[_idAtual].fake = true;
+    _idsArquivo[_idAtual].confiavel = false;
+    saveFile(() => {
+        recuperarProximoId();
+        next();
+    })
+}
+
+var confiavel = function (req,res,next) {
+    console.log("FAKE!!! ", _idAtual)
+    _idsArquivo[_idAtual].visitado = true;
+    _idsArquivo[_idAtual].confiavel = true;
+    _idsArquivo[_idAtual].fake = false;
     saveFile(() => {
         recuperarProximoId();
         next();
@@ -62,6 +74,7 @@ var nextPage = function (req,res,next) {
     console.log("LEGIT!!! ", _idAtual)
     _idsArquivo[_idAtual].visitado = true;
     _idsArquivo[_idAtual].fake = false;
+    _idsArquivo[_idAtual].confiavel = false;
     saveFile(() => {
         recuperarProximoId();
         next();
@@ -85,6 +98,8 @@ var init = function () {
     app.get('/', paginaSteam())
     
     app.get('/fake', fake, paginaSteam())
+
+    app.get('/confiavel', confiavel, paginaSteam())
     
     app.get('/next', nextPage, paginaSteam())
     
