@@ -4,7 +4,7 @@ var request = require('request');
 var callback = "function (data) { document.write(data); document.close(); }" 
 var content = "<button onclick=\"jQuery.get('http://localhost:8089/fake', " + callback + ")\" type='button' style='position:absolute; top:0; background-color: #FF0000; color: #FFFFFF'>É fake!</button><button onclick=\"jQuery.get('http://localhost:8089/next', " + callback + ")\"  type='button' style='position:absolute; top:0; right:0 '>Próximo</button></body></html>"
 
-
+const fileName = "steamid_visitados.json"
 const express = require('express')
 const app = express()
 
@@ -12,18 +12,34 @@ var _idAtual = 0;
 var _keys = [];
 
 var carregarIds = function (callback) {
-    fs.readFile('steamid_visitados.json', function (err, data) {
+    fs.readFile(fileName, function (err, data) {
         var json = JSON.parse(data)
         _keys = Object.keys(json)
         console.log('file loaded')
+        _idsArquivo = json
         callback();
-        return json;
     });
+}
+
+
+var saveFile = function (callback) {
+    fs.writeFile(fileName, JSON.stringify(_idsArquivo), function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        callback();
+    }); 
 }
 var recuperarProximoId = function (req,res,next) {
     var pos = _keys.indexOf(_idAtual);
     if (pos == -1 ) {
-        _idAtual = _keys[0]
+        for(var key of _keys){
+            if (_idsArquivo[key].visitado === false) {
+                _idAtual = key
+                break;
+            }
+        }
+        return _idAtual
     }
     if (pos + 1 == _keys.length){
         console.log("Terminou")
@@ -34,14 +50,22 @@ var recuperarProximoId = function (req,res,next) {
 
 var fake = function (req,res,next) {
     console.log("FAKE!!! ", _idAtual)
-    recuperarProximoId();
-    next();
+    _idsArquivo[_idAtual].visitado = true;
+    _idsArquivo[_idAtual].fake = true;
+    saveFile(() => {
+        recuperarProximoId();
+        next();
+    })
 }
 
 var nextPage = function (req,res,next) {
     console.log("LEGIT!!! ", _idAtual)
-    recuperarProximoId();
-    next();
+    _idsArquivo[_idAtual].visitado = true;
+    _idsArquivo[_idAtual].fake = false;
+    saveFile(() => {
+        recuperarProximoId();
+        next();
+    })
 }
 
 var paginaSteam = function () {
@@ -67,4 +91,4 @@ var init = function () {
     app.listen(8089, () => console.log('Example app listening on port 8089 '))
 }
 
-var _idsArquivo = carregarIds(init)
+carregarIds(init)
