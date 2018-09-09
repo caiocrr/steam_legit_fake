@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var request = require('request');
 var callback = "function (data) { document.write(data); document.close(); }" 
-var content = "<button onclick=\"jQuery.get('http://localhost:8089/fake', " + callback + ")\" type='button' style='width: 100px; height: 50px; position:absolute; top:0; background-color: #FF0000; color: #FFFFFF'>É fake!</button><button onclick=\"jQuery.get('http://localhost:8089/next', " + callback + ")\"  type='button' style='width: 100px; height: 50px; position:absolute; top:0; right:50vw; z-index: 500'>Próximo</button><button onclick=\"jQuery.get('http://localhost:8089/confiavel', " + callback + ")\"  type='button' style='width: 100px; height: 50px; position:absolute; top:0; right:0; background-color:#00FF00'>Confiável</button></body></html>"
+var content = "<button onclick=\"jQuery.get('http://localhost:8089/fake', " + callback + "); this.onclick=null;\" type='button' style='width: 100px; height: 50px; position:absolute; top:0; background-color: #FF0000; color: #FFFFFF'>É fake!</button><button onclick=\"jQuery.get('http://localhost:8089/next', " + callback + "); this.onclick=null;\"  type='button' style='width: 100px; height: 50px; position:absolute; top:0; right:50vw; z-index: 500'>Próximo</button><button onclick=\"jQuery.get('http://localhost:8089/confiavel', " + callback + "); this.onclick=null;\"  type='button' style='width: 100px; height: 50px; position:absolute; top:0; right:0; background-color:#00FF00'>Confiável</button></body></html>"
 
 const fileName = "steamid_visitados.json"
 const express = require('express')
