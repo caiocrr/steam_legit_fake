@@ -52,7 +52,7 @@ var fake = function (req,res,next) {
 }
 
 var confiavel = function (req,res,next) {
-    console.log("FAKE!!! ", _idAtual)
+    console.log("Confiável! ", _idAtual)
     _idsArquivo[_idAtual].visitado = true;
     _idsArquivo[_idAtual].confiavel = true;
     _idsArquivo[_idAtual].fake = false;
@@ -63,7 +63,7 @@ var confiavel = function (req,res,next) {
 }
 
 var nextPage = function (req,res,next) {
-    console.log("LEGIT!!! ", _idAtual)
+    console.log("Nada a dizer ", _idAtual)
     _idsArquivo[_idAtual].visitado = true;
     _idsArquivo[_idAtual].fake = false;
     _idsArquivo[_idAtual].confiavel = false;
